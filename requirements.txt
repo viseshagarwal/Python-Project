@@ -1,1 +1,2 @@
 newspaper3k==0.2.8
+python-dotenv @ file:///work/ci_py311/python-dotenv_1676842320650/work
