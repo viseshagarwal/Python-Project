@@ -1,4 +1,3 @@
 newspaper3k==0.2.8
 python-dotenv==1.0.1
 google-generativeai==0.4.1
-# python-dotenv @ file:///work/ci_py311/python-dotenv_1676842320650/work

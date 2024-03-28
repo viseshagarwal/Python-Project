@@ -1,6 +1,9 @@
 import streamlit as st
 import newspaper
 
+# def remember():
+#     st.session_state.article = ""
+
 # Main Streamlit app
 def main():
     st.set_page_config(page_title="Top Articles Fetcher", page_icon=":newspaper:")
@@ -8,7 +11,14 @@ def main():
     st.title("Top Articles Fetcher")
 
     # URL input
-    website_url = st.text_input("Enter the URL of the news website:")
+    if 'article' not in st.session_state:
+        st.session_state.article = ""
+    
+    website_url = st.text_input("Enter the URL of the news website:",value=st.session_state.article)
+
+    if website_url:
+        st.session_state.article = website_url
+    #st.text_input("Enter the URL of the news website:", value="https://www.bbc.com/news")
 
     if st.button("Fetch Top Articles"):
         if website_url:
@@ -25,7 +35,7 @@ def main():
                     for article in top_articles:
                         article.download()
                         article.parse()
-                        print(article)
+                        # print(article)
                         # Display article title and publish date
                         st.markdown(f"**Title:** {article.title}")
                         st.write(f"**Published Date:** {article.publish_date}")
@@ -41,4 +51,5 @@ def main():
             st.warning("Please enter a valid URL.")
 
 if __name__ == "__main__":
+    # remember()
     main()
