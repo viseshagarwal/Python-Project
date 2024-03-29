@@ -1,8 +1,10 @@
 import streamlit as st
 
 
-def main():
+def main(): 
+    
     st.set_page_config(page_title="Home", page_icon=":newspaper:")
+    st.sidebar.title("Navigation")
     st.title("Home")
     st.write("Welcome to the News Article Summarizer!")
     st.write("Use the sidebar to navigate to different pages.")
@@ -14,5 +16,6 @@ def main():
     st.write("Happy Summarizing!")
     st.write("Made with ❤️ by [Visesh Agarwal](https://github.com/viseshagarwal)")
 
+    
 if __name__ == "__main__":
     main()
