@@ -24,7 +24,7 @@ def main():
                 top_articles = source.articles[:10]
                 if top_articles:
                     st.subheader("Top Articles")
-
+                    #print(type(top_articles))
                     for article in top_articles:
                         article.download()
                         article.parse()

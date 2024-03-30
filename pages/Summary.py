@@ -3,7 +3,11 @@ import newspaper
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+import nltk
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
+nltk.download('punkt')
 
 load_dotenv()
 
@@ -16,28 +20,42 @@ here is my news article text:
 
 def genai_summarize(text, prompt):
     try:
-        summary = model.generate_content(prompt+text)
+        summary = model.generate_content(prompt + text)
         return summary.text
     except Exception as e:
-        st.error(f"An error occurred while generating the summary: {str(e)}")
-        return None
+        raise ValueError(f"An error occurred while generating the summary: {str(e)}")
 
 def fetch_article_data(url):
     try:
         article = newspaper.Article(url=url, language='en')
         article.download()
         article.parse()
+        article.nlp()
+
+        try:
+            summary = genai_summarize(article.text, prompt)
+        except Exception as genai_exception:
+            summary = article.summary if article.summary else "No summary available"
+
         article_data = {
             "title": article.title,
             "text": article.text,
+            "authors": article.authors,
             "published_date": str(article.publish_date),
             "top_image": article.top_image,
-            "summary": genai_summarize(article.text, prompt)
+            "summary": summary
         }
         return article_data
     except Exception as e:
         st.error(f"An error occurred while fetching the article data: {str(e)}")
         return None
+
+def generate_wordcloud(text):
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    st.pyplot(plt)
 
 def main():
     st.set_page_config(page_title="Article Information Fetcher", page_icon=":newspaper:")
@@ -51,9 +69,14 @@ def main():
                 st.header(article_data['title'])
                 st.image(article_data['top_image'], caption="Article Image", use_column_width=True)
                 st.write(f"Published Date: {article_data['published_date']}")
-                st.write(f"**Authors:** {article_data['authors'] if article_data['authors'] else 'Not available'}")
                 st.subheader("Text")
                 st.write(article_data['text'])
+
+                # Generate and display word cloud
+                if article_data['text']:
+                    st.subheader("Word Cloud")
+                    generate_wordcloud(article_data['text'])
+
                 if article_data['summary']:
                     st.subheader("Summary")
                     st.write(article_data['summary'])
