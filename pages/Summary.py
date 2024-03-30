@@ -12,7 +12,7 @@ nltk.download('punkt')
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel(model_name="gemini-1.0-pro")
+model = genai.GenerativeModel(model_name="gemini-pro")
 
 prompt = '''You are a News article Summarizer, you have to summarize the text and provide a news summary.
 here is my news article text: 
