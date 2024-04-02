@@ -7,16 +7,20 @@ import nltk
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-nltk.download('punkt')
+
+st.set_page_config(page_title="Article Summary", page_icon=":newspaper:")
+
+# nltk.download('punkt')
 
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel(model_name="gemini-pro")
 
-prompt = '''You are a News article Summarizer, you have to summarize the text and provide a news summary.
+prompt = """You are a News article Summarizer, you have to summarize the news article text and content and provide a news summary.
 here is my news article text: 
-'''
+"""
+
 
 def genai_summarize(text, prompt):
     try:
@@ -25,9 +29,10 @@ def genai_summarize(text, prompt):
     except Exception as e:
         raise ValueError(f"An error occurred while generating the summary: {str(e)}")
 
+
 def fetch_article_data(url):
     try:
-        article = newspaper.Article(url=url, language='en')
+        article = newspaper.Article(url=url, language="en")
         article.download()
         article.parse()
         article.nlp()
@@ -43,49 +48,58 @@ def fetch_article_data(url):
             "authors": article.authors,
             "published_date": str(article.publish_date),
             "top_image": article.top_image,
-            "summary": summary
+            "summary": summary,
         }
         return article_data
     except Exception as e:
         st.error(f"An error occurred while fetching the article data: {str(e)}")
         return None
 
+
 def generate_wordcloud(text):
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+    wordcloud = WordCloud(width=800, height=400, background_color="white").generate(
+        text
+    )
     plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
     st.pyplot(plt)
 
+
 def main():
-    st.set_page_config(page_title="Article Information Fetcher", page_icon=":newspaper:")
-    st.title("Article Information Fetcher")
+    st.title("Article Summary")
+
     url = st.text_input("Enter the URL of the article:")
 
     if st.button("Fetch Article"):
         if url:
+            # session_state.url = url  # Store the URL in session state
             article_data = fetch_article_data(url)
             if article_data:
-                st.header(article_data['title'])
-                st.image(article_data['top_image'], caption="Article Image", use_column_width=True)
+                st.header(article_data["title"])
+                st.image(
+                    article_data["top_image"],
+                    caption="Article Image",
+                    use_column_width=True,
+                )
                 st.write(f"Published Date: {article_data['published_date']}")
-                st.subheader("Text")
-                st.write(article_data['text'])
+                st.subheader("News")
+                st.write(article_data["text"])
 
-                # Generate and display word cloud
-                if article_data['text']:
+                if article_data["text"]:
                     st.subheader("Word Cloud")
-                    generate_wordcloud(article_data['text'])
+                    generate_wordcloud(article_data["text"])
 
-                if article_data['summary']:
+                if article_data["summary"]:
                     st.subheader("Summary")
-                    st.write(article_data['summary'])
+                    st.write(article_data["summary"])
                 else:
                     st.warning("Failed to generate summary.")
             else:
                 st.warning("No article data available. Please check the URL.")
         else:
             st.warning("Please enter a valid URL.")
+
 
 if __name__ == "__main__":
     main()
