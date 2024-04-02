@@ -7,8 +7,12 @@ import nltk
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-
-st.set_page_config(page_title="Article Summary", page_icon=":newspaper:")
+st.set_page_config(
+    page_title="Article Summary",
+    page_icon=":newspaper:",
+    layout="wide",  # Set layout to wide mode
+    initial_sidebar_state="expanded",  # Set theme to light mode
+)
 
 # nltk.download('punkt')
 
@@ -72,33 +76,33 @@ def main():
     url = st.text_input("Enter the URL of the article:")
 
     if st.button("Fetch Article"):
-        if url:
-            # session_state.url = url  # Store the URL in session state
-            article_data = fetch_article_data(url)
-            if article_data:
-                st.header(article_data["title"])
-                st.image(
-                    article_data["top_image"],
-                    caption="Article Image",
-                    use_column_width=True,
-                )
-                st.write(f"Published Date: {article_data['published_date']}")
-                st.subheader("News")
-                st.write(article_data["text"])
+        with st.spinner("Fetching article..."):  # Show loading spinner
+            if url:
+                article_data = fetch_article_data(url)
+                if article_data:
+                    st.header(article_data["title"])
+                    st.image(
+                        article_data["top_image"],
+                        caption="Article Image",
+                        use_column_width=True,
+                    )
+                    st.write(f"Published Date: {article_data['published_date']}")
+                    st.subheader("News")
+                    st.write(article_data["text"])
 
-                if article_data["text"]:
-                    st.subheader("Word Cloud")
-                    generate_wordcloud(article_data["text"])
+                    if article_data["text"]:
+                        st.subheader("Word Cloud")
+                        generate_wordcloud(article_data["text"])
 
-                if article_data["summary"]:
-                    st.subheader("Summary")
-                    st.write(article_data["summary"])
+                    if article_data["summary"]:
+                        st.subheader("Summary")
+                        st.write(article_data["summary"])
+                    else:
+                        st.warning("Failed to generate summary.")
                 else:
-                    st.warning("Failed to generate summary.")
+                    st.warning("No article data available. Please check the URL.")
             else:
-                st.warning("No article data available. Please check the URL.")
-        else:
-            st.warning("Please enter a valid URL.")
+                st.warning("Please enter a valid URL.")
 
 
 if __name__ == "__main__":
