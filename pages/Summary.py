@@ -6,15 +6,16 @@ import google.generativeai as genai
 import nltk
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from textblob import TextBlob
 
 st.set_page_config(
     page_title="Article Summary",
     page_icon=":newspaper:",
-    layout="wide",  # Set layout to wide mode
-    initial_sidebar_state="expanded",  # Set theme to light mode
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
-# nltk.download('punkt')
+# nltk.download("punkt")
 
 load_dotenv()
 
@@ -53,6 +54,10 @@ def fetch_article_data(url):
             "published_date": str(article.publish_date),
             "top_image": article.top_image,
             "summary": summary,
+            "keywords": article.keywords,
+            "sentiment": TextBlob(
+                article.text
+            ).sentiment.polarity,  
         }
         return article_data
     except Exception as e:
@@ -76,7 +81,7 @@ def main():
     url = st.text_input("Enter the URL of the article:")
 
     if st.button("Fetch Article"):
-        with st.spinner("Fetching article..."):  # Show loading spinner
+        with st.spinner("Fetching article..."):  
             if url:
                 article_data = fetch_article_data(url)
                 if article_data:
@@ -90,6 +95,10 @@ def main():
                     st.subheader("News")
                     st.write(article_data["text"])
 
+                    if article_data["keywords"]:
+                        st.subheader("Keywords")
+                        st.write(", ".join(article_data["keywords"]))
+
                     if article_data["text"]:
                         st.subheader("Word Cloud")
                         generate_wordcloud(article_data["text"])
@@ -99,6 +108,16 @@ def main():
                         st.write(article_data["summary"])
                     else:
                         st.warning("Failed to generate summary.")
+
+                    st.subheader("Sentiment Analysis")
+                    sentiment_score = article_data["sentiment"]
+                    if sentiment_score > 0:
+                        st.write("Overall sentiment: Positive")
+                    elif sentiment_score < 0:
+                        st.write("Overall sentiment: Negative")
+                    else:
+                        st.write("Overall sentiment: Neutral")
+
                 else:
                     st.warning("No article data available. Please check the URL.")
             else:
