@@ -15,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# nltk.download("punkt")
+nltk.download("punkt")
 
 load_dotenv()
 

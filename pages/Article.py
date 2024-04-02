@@ -2,6 +2,8 @@ import streamlit as st
 import newspaper
 import nltk
 
+nltk.download("punkt")
+
 
 def main():
 
