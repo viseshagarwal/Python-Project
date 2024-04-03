@@ -18,7 +18,7 @@ def main():
     top_websites = {
         "News18": "https://www.News18.com/news",
         "NDTV": "https://ndtv.com/",
-        "NDTV India": "https://www.ndtv.in/",
+        "NDTV India": "https://ndtv.in/",
         "India TV": "https://www.indiatvnews.com/",
         "Deccan Herald": "https://www.deccanherald.com/",
         "BBC News": "https://www.bbc.com/news",
